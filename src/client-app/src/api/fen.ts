@@ -1,6 +1,6 @@
-import { Board, Piece, PieceType, Color } from "../models/chess";
+import { BoardArray, Piece, PieceType, Color } from "../models/chess";
 
-const fenDefault = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
+export const fenDefault = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
 
 const fenToPieceType : Record<string, PieceType> = {
     'r': 'rook',
@@ -28,37 +28,30 @@ function isChessPiece(character: string) {
     return regex.test(character);
 }
 
-export function convertFenToBoard(fenString: string): Board {
+export function convertFenToBoard(fenString: string): BoardArray {
     const ranks = fenString.trim().split('/');
 
     if (ranks.length !== 8) throw new Error("Input Fen String is not valid.");
 
-    // Initialize empty 2D array of 8x8
-    let board: Board = Array.from({ length: 8 }, () => Array(8).fill(null));
-
-    // Create 8 rows first
-    let rows =  Array(8).fill(null);
-
-
-
-    ranks.forEach((rank, index) => {
+    const chessBoard: BoardArray = ranks.map((rank) => {
         const files = rank.split('');
-        console.log(files)
-        const col = files.map((char, index) => {
+
+        const col : (Piece | null)[] = files.flatMap((char) => {
             if (isChessPiece(char)) {
                 return fenToPiece(char);
             }
             // Should be number
             else {
                 const spaces = parseInt(char);
-                console.log("space", spaces, char)
                 if (isNaN(spaces) || spaces <= 0) throw new Error("Invalid character.");
-                return Array(spaces).fill(null).flat() as null[];
+                return Array(spaces).fill(null);
             }
         });
 
-        rows[index] = col.flat();
+        if (col.length !== 8) throw new Error("Invalid files.");
+
+        return col;
     });
 
-    return rows;
+    return chessBoard;
 }

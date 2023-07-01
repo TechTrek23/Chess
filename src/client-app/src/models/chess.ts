@@ -9,4 +9,4 @@ export interface Piece {
 }
 
 // 2D array consist of Piece or empty spaces.
-export type Board = (Piece | null)[][];
+export type BoardArray = (Piece | null)[][];
