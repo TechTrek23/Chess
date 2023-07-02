@@ -10,10 +10,8 @@ interface Props {
 
 const Cell = ({piece}: Props) => {
     return(
-        <div className="flex-item">
-            <div className="flex-cell">
-                {piece ? piece.type : 'space'}
-            </div>
+        <div>
+            {piece?.type }
         </div>
     );
 }

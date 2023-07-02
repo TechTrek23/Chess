@@ -13,19 +13,18 @@ import "./Board.css";
 
 function Board() {
     // initialize the board
-    const boardData : BoardArray = convertFenToBoard(fenDefault);
+    const boardData: BoardArray = convertFenToBoard(fenDefault);
     // load the cells and determine if it is black or white cell
     // FEN notation will go into boardData
 
-    return(
-        <div className="container">
+    return (
+        <div className="grid-container">
             {boardData.map((row) => {
                 return (
-                    <div className="flex-container">
-                        {row.map((cell) => {
-                            return <Cell piece={cell}/>;
-                        })}
-                    </div>);
+                    row.map((cell) => {
+                        return <Cell piece={cell} />;
+                    })
+                );
             })}
         </div>
     );

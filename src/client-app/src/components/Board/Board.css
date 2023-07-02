@@ -1,36 +1,15 @@
-.container {
-    width: 50vw;
-    height: 50vh;
-}
-
-.flex-container {
-    display: flex;
-    justify-content: start;
-    flex-wrap: wrap; 
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto auto auto;
+    width: 35vw;
+    height: 35vh;
   }
   
-  .flex-cell {
-    flex: 1 1 0px;
-    display: flex;
-    justify-content: center;
-    /* align-items: stretch; */
-    padding: 0.5rem;
-    box-sizing: border-box;
-  }
-  
-  .flex-cell:before {
-    content: '';
-    display: table;
-    padding-top: 100%;
-  }
-  
-  .flex-item {
-    flex: 1 1 0px;
+  .grid-container > div {
+    background-color:#a34d29;
     border: 1px solid #522614;
-    background: #a34d29;
-    color: white;
-    
-    display: inline-block;
-    justify-content: center;
-    /* align-items: center; */
+    text-align: center;
+    padding: 20px 0;
+    font-size: 10px;
+    height: 10px;
   }
