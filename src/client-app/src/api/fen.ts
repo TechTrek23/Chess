@@ -2,6 +2,7 @@ import { BoardArray, Piece, PieceType, Color } from "../models/chess";
 
 export const fenDefault = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
 
+
 const fenToPieceType : Record<string, PieceType> = {
     'r': 'rook',
     'n': 'knight',
@@ -11,11 +12,11 @@ const fenToPieceType : Record<string, PieceType> = {
     'p': 'pawn'
 }
 
-// Convert fen character to Piece       
-function fenToPiece(character: string): Piece {
+// Convert san to Piece       
+function sanToPiece(san: string): Piece {
     // Black if lowercase, White if uppercase
-    const color: Color = (character === character.toLowerCase()) ? 'black' : 'white';
-    const pieceType: PieceType = fenToPieceType[character.toLowerCase()];
+    const color: Color = (san === san.toLowerCase()) ? 'black' : 'white';
+    const pieceType: PieceType = fenToPieceType[san.toLowerCase()];
 
     return {
         color: color,
@@ -23,7 +24,7 @@ function fenToPiece(character: string): Piece {
     }
 }
 
-function isChessPiece(character: string) {
+function isSan(character: string) {
     const regex = /^[rnbqkp]$/i;
     return regex.test(character);
 }
@@ -36,13 +37,13 @@ export function convertFenToBoard(fenString: string): BoardArray {
     const chessBoard: BoardArray = ranks.map((rank) => {
         const files = rank.split('');
 
-        const col : (Piece | null)[] = files.flatMap((char) => {
-            if (isChessPiece(char)) {
-                return fenToPiece(char);
+        const col : (Piece | null)[] = files.flatMap((san) => {
+            if (isSan(san)) {
+                return sanToPiece(san);
             }
             // Should be number
             else {
-                const spaces = parseInt(char);
+                const spaces = parseInt(san);
                 if (isNaN(spaces) || spaces <= 0) throw new Error("Invalid character.");
                 return Array(spaces).fill(null);
             }
@@ -54,4 +55,61 @@ export function convertFenToBoard(fenString: string): BoardArray {
     });
 
     return chessBoard;
+}
+
+const sanToPieceType : Record<PieceType, string> = {
+    'rook': 'r',
+    'knight': 'n',
+    'bishop': 'b',
+    'queen': 'q',
+    'king': 'k',
+    'pawn': 'p'
+}
+
+function pieceToSan(piece: Piece | null) : string | null {
+    if (piece === null) return null;
+    
+    const san = sanToPieceType[piece.type];
+
+    return (piece.color === 'black') ? san : san.toUpperCase();
+}
+
+export function convertBoardToFen(board: BoardArray) : string {
+    let fenString = '';
+
+    // Loop through row (ranks)
+    for (let row = 0; row < board.length; row++) {
+        const files = board[row];
+        let emptySpaceCount = 0;
+        // Loop through column (files)
+        for (let col = 0; col < files.length; col++) {
+            const piece: (Piece | null) = board[row][col];
+            const san : (string | null) = pieceToSan(piece);
+            
+            // Encounter a Piece
+            if (san !== null) {
+                // Concat the number of empty spaces to FEN string
+                if (emptySpaceCount !== 0) {
+                    fenString += emptySpaceCount;
+                    emptySpaceCount = 0;
+                } 
+
+                fenString += san;        
+            } 
+            // Empty space
+            else {
+                emptySpaceCount++;
+            }
+        }
+
+        // Concat the remaining empty space count to FEN string
+        if (emptySpaceCount !== 0) {
+            fenString += emptySpaceCount;
+            emptySpaceCount = 0;
+        }
+
+        // Concat with '/' after every row
+        fenString += '/'
+    }
+    return fenString;
 }
