@@ -6,11 +6,12 @@ import "../Board/Board.css"
 
 interface Props {
     piece : Piece | null
+    isBlackCell: Boolean
 }
 
-const Cell = ({piece}: Props) => {
+const Cell = ({piece, isBlackCell}: Props) => {
     return(
-        <div>
+        <div className={`${isBlackCell? "black-cell": "white-cell"}`}>
             {piece?.type }
         </div>
     );

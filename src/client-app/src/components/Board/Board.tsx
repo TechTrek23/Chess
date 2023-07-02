@@ -6,8 +6,6 @@ import Cell from "../Cell/Cell";
 import "./Board.css";
 
 /* Board colors:
-    #a34d29
-    #d5b17c
     #522614
 */
 
@@ -19,10 +17,10 @@ function Board() {
 
     return (
         <div className="grid-container">
-            {boardData.map((row) => {
+            {boardData.map((row, rowIndex) => {
                 return (
-                    row.map((cell) => {
-                        return <Cell piece={cell} />;
+                    row.map((cell, colIndex) => {
+                        return <Cell piece={cell} isBlackCell={(rowIndex + colIndex) % 2 == 0} />;
                     })
                 );
             })}
