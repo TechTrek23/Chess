@@ -5,3 +5,8 @@
 .white-cell {
     background-color: #d3ac72;
 }
+
+img {
+    position: relative;
+    top: -17px;
+}

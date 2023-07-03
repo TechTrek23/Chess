@@ -37,9 +37,10 @@ piecesMap.set('queen', [queen_b, queen_w]);
 piecesMap.set('rook', [rook_b, rook_w]);
 
 const Cell = ({piece, isBlackCell}: Props) => {
+    const pieceColor = piece?.color == 'black' ? 0 : 1;
     return(
         <div className={`${isBlackCell? "black-cell": "white-cell"}`}>
-            <img src={piecesMap.get(piece?.type)?.[0]} />
+            <img src={piecesMap.get(piece?.type)?.[pieceColor]} />
         </div>
     );
 }
