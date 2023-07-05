@@ -74,7 +74,7 @@ function pieceToSan(piece: Piece | null) : string | null {
     return (piece.color === 'black') ? san : san.toUpperCase();
 }
 
-export function convertBoardToFen(board: BoardArray) : string {
+export function convertBoardToFen(board: BoardArray, colorTurn: Color) : string {
     let fenString = '';
 
     // Loop through row (ranks)
@@ -108,8 +108,12 @@ export function convertBoardToFen(board: BoardArray) : string {
             emptySpaceCount = 0;
         }
 
-        // Concat with '/' after every row
-        fenString += '/'
+        // Concat with '/' after every row except last row
+        if (row !== board.length - 1) fenString += '/'
     }
+
+    // concat color turn into FEN
+    fenString += (colorTurn === 'white') ? ' w' : ' b';
+
     return fenString;
 }

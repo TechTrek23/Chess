@@ -1,9 +1,9 @@
-import React from "react";
 import Board from "../../components/Board/Board";
+import './Game.css'
 
 function Game() {
     return(
-        <div>
+        <div className="game-container">
             <Board />
         </div>
     );

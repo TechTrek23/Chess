@@ -23,8 +23,10 @@ import "./Cell.css";
 import "../Board/Board.css"
 
 interface Props {
-    piece : Piece | null
-    isBlackCell: Boolean
+    piece : Piece | null;
+    isBlackCell: Boolean;
+    cellIsHighlighted: boolean;
+    onClick: () => void;
 }
 
 const piecesMap = new Map();
@@ -36,10 +38,12 @@ piecesMap.set('pawn', [pawn_b, pawn_w]);
 piecesMap.set('queen', [queen_b, queen_w]);
 piecesMap.set('rook', [rook_b, rook_w]);
 
-const Cell = ({piece, isBlackCell}: Props) => {
-    const pieceColor = piece?.color == 'black' ? 0 : 1;
+
+const Cell = ({piece, isBlackCell, cellIsHighlighted, onClick}: Props) => {
+    const pieceColor = piece?.color === 'black' ? 0 : 1;
+
     return(
-        <div className={`${isBlackCell? "black-cell": "white-cell"}`}>
+        <div className={`${isBlackCell? "black-cell": "white-cell"}  ${cellIsHighlighted? "highlighted-cell": ""}`} onClick={() => onClick()}>
             <img src={piecesMap.get(piece?.type)?.[pieceColor]} />
         </div>
     );
