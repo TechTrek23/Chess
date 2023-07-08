@@ -3,11 +3,10 @@
     grid-template-columns: auto auto auto auto auto auto auto auto;
     width: fit-content;
     height: fit-content;
-  }
-  
-  .grid-container > div {
-    text-align: center;
-    padding: 20px 0;
-    height: 10px;
-    width: 50px;
-  }
+    div {
+      text-align: center;
+      padding: 20px 0;
+      height: 10px;
+      width: 50px;
+    }
+  } 

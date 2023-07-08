@@ -1,5 +1,5 @@
 import Board from "../../components/Board/Board";
-import './Game.css'
+import './Game.scss'
 
 function Game() {
     return(

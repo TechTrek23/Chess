@@ -1,19 +1,17 @@
 .black-cell {
     /* background-color: #ab5e3d; */
     background-color: #769656;
+    &.highlighted-cell {
+        background-color: #bbca2b;
+    }
 }
 
 .white-cell {
     /* background-color: #d3ac72; */
     background-color: #eeeed2;
-}
-
-.black-cell.highlighted-cell {
-    background-color: #bbca2b;
-}
-
-.white-cell.highlighted-cell {
-    background-color: #f6f668;
+    &.highlighted-cell {
+        background-color: #f6f668;
+    }
 }
 
 img {

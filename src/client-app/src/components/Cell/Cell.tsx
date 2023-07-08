@@ -19,8 +19,8 @@ import queen_w from "../../assets/images/queen_w.svg";
 import rook_b from "../../assets/images/rook_b.svg";
 import rook_w from "../../assets/images/rook_w.svg";
 
-import "./Cell.css";
-import "../Board/Board.css"
+import "./Cell.scss";
+import "../Board/Board.scss"
 
 interface Props {
     piece : Piece | null;

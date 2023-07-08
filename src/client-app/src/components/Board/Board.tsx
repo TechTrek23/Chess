@@ -3,7 +3,7 @@ import { BoardArray, Color, Coordinate } from "../../models/chess";
 import { convertBoardToFen, convertFenToBoard, fenDefault } from "../../api/fen";
 import Cell from "../Cell/Cell";
 
-import "./Board.css";
+import "./Board.scss";
 
 // Import Sound
 import moveSound from '../../assets/sounds/move.mp3';
