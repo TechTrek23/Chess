@@ -3,7 +3,7 @@ import { BoardArray, Color, Coordinate } from "../../models/chess";
 import { convertBoardToFen, convertFenToBoard, fenDefault } from "../../api/fen";
 import Cell from "../Cell/Cell";
 
-import "./Board.css";
+import "./Board.scss";
 
 // Import Sound
 import moveSound from '../../assets/sounds/move.mp3';
@@ -15,6 +15,9 @@ import useSound from "use-sound";
 */
 
 function Board() {
+    const alphabeticalFiles = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+    const rankNumbers = ['8', '7', '6', '5', '4', '3', '2', '1'];
+
     // initialize the board
     const [currentBoard, setCurrentBoard] = useState<BoardArray>(convertFenToBoard(fenDefault));
     const [activeCell, setActiveCell] = useState<Coordinate | null>(null);
@@ -69,7 +72,8 @@ function Board() {
     return (
         <>
             <div className="grid-container">
-                {currentBoard.map((row, rowIndex) => {
+                {
+                currentBoard.map((row, rowIndex) => {
                     return (
                         row.map((cell, colIndex) => {
 
@@ -80,6 +84,8 @@ function Board() {
                                 key={`${rowIndex} ${colIndex}`}
                                 piece={cell}
                                 isBlackCell={(rowIndex + colIndex) % 2 === 0}
+                                rowRank = {colIndex == 0 ? rankNumbers[rowIndex] : null}
+                                colFile= {rowIndex == 7 ? alphabeticalFiles[colIndex] : null}
                                 cellIsHighlighted={cellIsHighlighted}
                                 onClick={() => onCellClick({ row: rowIndex, col: colIndex })}
                             />;

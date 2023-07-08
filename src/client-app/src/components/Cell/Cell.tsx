@@ -19,12 +19,14 @@ import queen_w from "../../assets/images/queen_w.svg";
 import rook_b from "../../assets/images/rook_b.svg";
 import rook_w from "../../assets/images/rook_w.svg";
 
-import "./Cell.css";
-import "../Board/Board.css"
+import "./Cell.scss";
+import "../Board/Board.scss"
 
 interface Props {
     piece : Piece | null;
     isBlackCell: Boolean;
+    rowRank: string | null;
+    colFile: string | null;
     cellIsHighlighted: boolean;
     onClick: () => void;
 }
@@ -39,12 +41,14 @@ piecesMap.set('queen', [queen_b, queen_w]);
 piecesMap.set('rook', [rook_b, rook_w]);
 
 
-const Cell = ({piece, isBlackCell, cellIsHighlighted, onClick}: Props) => {
+const Cell = ({piece, isBlackCell, rowRank, colFile, cellIsHighlighted, onClick}: Props) => {
     const pieceColor = piece?.color === 'black' ? 0 : 1;
 
     return(
-        <div className={`${isBlackCell? "black-cell": "white-cell"}  ${cellIsHighlighted? "highlighted-cell": ""}`} onClick={() => onClick()}>
+        <div className={`cell ${isBlackCell? "black-cell": "white-cell"}  ${cellIsHighlighted? "highlighted-cell": ""}`} onClick={() => onClick()}>
             <img src={piecesMap.get(piece?.type)?.[pieceColor]} />
+            <div className="row-rank rank-and-files">{rowRank}</div>
+            <div className="col-file rank-and-files">{colFile}</div>
         </div>
     );
 }
