@@ -1,20 +1,56 @@
+.cell {
+    position: relative;
+    text-align: center;
+    padding: 20px 0;
+    height: 10px;
+    width: 50px;
+}
+
 .black-cell {
     /* background-color: #ab5e3d; */
     background-color: #769656;
+
     &.highlighted-cell {
         background-color: #bbca2b;
+    }
+
+    .row-rank, .col-file {
+        color: white;
     }
 }
 
 .white-cell {
     /* background-color: #d3ac72; */
     background-color: #eeeed2;
+
     &.highlighted-cell {
         background-color: #f6f668;
+    }
+
+    .row-rank, .col-file {
+        color: gray;
     }
 }
 
 img {
-    position: relative;
-    top: -17px;
+    position: absolute;
+    top: 2.5px;
+    left: 2.5px;
+}
+
+.rank-and-files {
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.row-rank {
+    position: absolute;
+    top: 0;
+    left: 1px;
+}
+
+.col-file {
+    position: absolute;
+    bottom: 0;
+    right: 1px;
 }
