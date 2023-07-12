@@ -1,6 +1,7 @@
 import rook_b from "../../assets/images/rook_b.svg";
 import rook_w from "../../assets/images/rook_w.svg";
 import { PieceType, Color, Coordinate } from "../chess";
+import { Game } from "../game";
 import { Piece } from "./piece";
 
 export class Rook extends Piece {
@@ -10,7 +11,13 @@ export class Rook extends Piece {
         super(type, color, image);
     }
 
-    validMoves(): Coordinate[] {
-        throw new Error("Method not implemented.");
+    validMoves(gameState: Game, {row, col}: Coordinate): Coordinate[] {
+        console.log("rook");
+        return (gameState.board[row][col]?.color === gameState.turn) ? 
+        [
+            { row: 1, col: 2}
+        ] 
+        :
+        [];
     }
 }

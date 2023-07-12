@@ -17,8 +17,8 @@ export interface Coordinate {
     col: number;
 }
 
-export type CastleState = { 
-    [color in Color]: { 
-        kingSide: boolean; queenSide: boolean 
-    } 
-}
+export type CastleState = {
+    [color in Color as Color]: {
+        kingSide: boolean; queenSide: boolean;
+    };
+};

@@ -1,6 +1,7 @@
 import pawn_b from "../../assets/images/pawn_b.svg";
 import pawn_w from "../../assets/images/pawn_w.svg";
 import { PieceType, Color, Coordinate } from "../chess";
+import { Game } from "../game";
 import { Piece } from "./piece";
 
 export class Pawn extends Piece {
@@ -11,7 +12,13 @@ export class Pawn extends Piece {
         super(type, color, image);
     }
 
-    validMoves(): Coordinate[] {
-        throw new Error("Method not implemented.");
+    validMoves(gameState: Game, {row, col}: Coordinate): Coordinate[] {
+        console.log("pawn")
+        return (gameState.board[row][col]?.color === gameState.turn) ? 
+        [
+            { row: 1, col: 2}
+        ] 
+        :
+        [];
     }
 }

@@ -13,7 +13,7 @@ export class Game {
     
     constructor(fenDefault: string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
         const [initialBoard, turn, castleState, enPassant, halfMoveClock, fullMoveClock] = fenDefault.split(" ");
-        
+
         this.board = convertFenToBoard(initialBoard);
         this.turn = (turn === 'w') ? 'white' : 'black';
         this.canCastle = processCastleState(castleState);
@@ -21,15 +21,20 @@ export class Game {
         this.halfMoveClock = +halfMoveClock;
         this.fullMoveClock = +fullMoveClock;
     }
+
+    // isValidMove({row, col}: Coordinate): boolean {
+
+    //     return (this.board[row][col]?.color !== this.turn);
+    // }
 }
 
 function processCastleState(fenCastleState: string): CastleState {
     return {
-        'white': {
+        white: {
             kingSide: fenCastleState.includes('K'),
             queenSide: fenCastleState.includes('Q')
         },
-        'black': {
+        black: {
             kingSide: fenCastleState.includes('k'),
             queenSide: fenCastleState.includes('q')
         }

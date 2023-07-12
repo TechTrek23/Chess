@@ -1,6 +1,7 @@
 import king_b from "../../assets/images/king_b.svg";
 import king_w from "../../assets/images/king_w.svg";
 import { PieceType, Color, Coordinate } from "../chess";
+import { Game } from "../game";
 import { Piece } from "./piece";
 
 export class King extends Piece {
@@ -10,7 +11,13 @@ export class King extends Piece {
         super(type, color, image);
     }
 
-    validMoves(): Coordinate[] {
-        throw new Error("Method not implemented.");
+    validMoves(gameState: Game, {row, col}: Coordinate): Coordinate[] {
+        console.log("king");
+        return (gameState.board[row][col]?.color === gameState.turn) ? 
+        [
+            { row: 1, col: 2}
+        ] 
+        :
+        [];
     }
 }

@@ -1,4 +1,5 @@
 import { Color, Coordinate, PieceType } from "../chess";
+import { Game } from "../game";
 
 export abstract class Piece {
     type: PieceType;
@@ -11,5 +12,5 @@ export abstract class Piece {
         this.image = image;
     }
 
-    abstract validMoves(): Coordinate[];
+    abstract validMoves(gameState: Game, {row, col}: Coordinate): Coordinate[];
 }
