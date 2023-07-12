@@ -1,27 +1,29 @@
-import { BoardArray, Piece, PieceType, Color } from "../models/chess";
+import { Bishop } from "../models/Pieces/bishop";
+import { King } from "../models/Pieces/king";
+import { Knight } from "../models/Pieces/knight";
+import { Pawn } from "../models/Pieces/pawn";
+import { Piece } from "../models/Pieces/piece";
+import { Queen } from "../models/Pieces/queen";
+import { Rook } from "../models/Pieces/rook";
+import { BoardArray, PieceType, Color } from "../models/chess";
 
 export const fenDefault = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
 
-
-const fenToPieceType : Record<string, PieceType> = {
-    'r': 'rook',
-    'n': 'knight',
-    'b': 'bishop',
-    'q': 'queen',
-    'k': 'king',
-    'p': 'pawn'
-}
+const sanToPieceMap: Record<string, (color: Color) => Piece> = {
+    'r': (color) => new Rook('rook', color),
+    'n': (color) => new Knight('knight', color),
+    'b': (color) => new Bishop('bishop', color),
+    'q': (color) => new Queen('queen', color),
+    'k': (color) => new King('king', color),
+    'p': (color) => new Pawn('pawn', color),
+};
+  
 
 // Convert san to Piece       
 function sanToPiece(san: string): Piece {
     // Black if lowercase, White if uppercase
     const color: Color = (san === san.toLowerCase()) ? 'black' : 'white';
-    const pieceType: PieceType = fenToPieceType[san.toLowerCase()];
-
-    return {
-        color: color,
-        type: pieceType
-    }
+    return sanToPieceMap[san.toLowerCase()](color);
 }
 
 function isSan(character: string) {
