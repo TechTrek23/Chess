@@ -15,7 +15,7 @@ function GameComponent() {
     const [activeCell, setActiveCell] = useState<Coordinate | null>(null);
     const [possibleMoves, setPossibleMoves] = useState<Coordinate[]>([]);
 
-    // Convert Board to FEN whenever board state or colorTurn state changes.
+    // Convert Board to FEN whenever game state changes.
     const fen = useMemo<string>(() => convertBoardToFen(gameState), [ gameState ]);
 
     const [playMove] = useSound(moveSound);
@@ -26,6 +26,7 @@ function GameComponent() {
 
         // Only move when the cell is active (i.e cell has been selected already and ready to be moved) && is selected piece's turn.
         if (activeCell && possibleMoves.length > 0) {
+
             // play sounds
             if (gameState.board[currRow][currCol] !== null) playCapture();
             else playMove();
@@ -34,12 +35,13 @@ function GameComponent() {
                 // get a deep copy of currentBoard because we cannot modify state directly
                 const newBoard = [...currGameState.board.map(r => [...r])];
 
-                const { row: activeRow, col: activeCol } = activeCell;
+                const { row: prevRow, col: prevCol } = activeCell;
 
-                // Set activePiece to current cell
-                newBoard[currRow][currCol] = currGameState.board[activeRow][activeCol];
-                // Remove activePiece from previous cell
-                newBoard[activeRow][activeCol] = null;
+                // Set selected Piece to current cell
+                newBoard[currRow][currCol] = currGameState.board[prevRow][prevCol];
+
+                // Remove Piece from previous cell
+                newBoard[prevRow][prevCol] = null;
 
                 // Reset active cell
                 setActiveCell(null);
@@ -60,8 +62,11 @@ function GameComponent() {
         // We can highlight these possible moves in chessboard.
         const currentPiece = gameState.board[coord.row][coord.col];
         setPossibleMoves(currentPiece ? currentPiece.validMoves(gameState, coord) : []);
-       
-        updateBoardState(coord)
+        
+        // Only try to update board state if cell is active (i.e a cell has be clicked before)
+        if (activeCell !== null) {
+            updateBoardState(coord)
+        }
     }
 
     return(

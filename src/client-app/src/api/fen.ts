@@ -8,33 +8,13 @@ import { Rook } from "../models/Pieces/rook";
 import { BoardArray, PieceType, Color, CastleState } from "../models/chess";
 import { Game } from "../models/game";
 
-export const fenDefault = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
-
-const sanToPieceMap: Record<string, (color: Color) => Piece> = {
-    'r': (color) => new Rook('rook', color),
-    'n': (color) => new Knight('knight', color),
-    'b': (color) => new Bishop('bishop', color),
-    'q': (color) => new Queen('queen', color),
-    'k': (color) => new King('king', color),
-    'p': (color) => new Pawn('pawn', color),
-};
-
-
-// Convert san to Piece       
-function sanToPiece(san: string): Piece {
-    // Black if lowercase, White if uppercase
-    const color: Color = (san === san.toLowerCase()) ? 'black' : 'white';
-    return sanToPieceMap[san.toLowerCase()](color);
-}
-
-function isSan(character: string) {
-    const regex = /^[rnbqkp]$/i;
-    return regex.test(character);
-}
+//#region Convert Fen to Board
 
 export function convertFenToBoard(fenString: string): BoardArray {
-    const [initialBoard] = fenDefault.split(" ");
-    const ranks = initialBoard.trim().split('/');
+    // The first item in the fenString will always be the board state.
+    const [ board ] = fenString.split(" ");
+
+    const ranks = board.trim().split('/');
 
     if (ranks.length !== 8) throw new Error("Input Fen String is not valid.");
 
@@ -61,27 +41,37 @@ export function convertFenToBoard(fenString: string): BoardArray {
     return chessBoard;
 }
 
-const sanToPieceType: Record<PieceType, string> = {
-    'rook': 'r',
-    'knight': 'n',
-    'bishop': 'b',
-    'queen': 'q',
-    'king': 'k',
-    'pawn': 'p'
+const sanToPieceMap: Record<string, (color: Color) => Piece> = {
+    'r': (color) => new Rook('rook', color),
+    'n': (color) => new Knight('knight', color),
+    'b': (color) => new Bishop('bishop', color),
+    'q': (color) => new Queen('queen', color),
+    'k': (color) => new King('king', color),
+    'p': (color) => new Pawn('pawn', color),
+};
+
+
+// Convert san to Piece object     
+function sanToPiece(san: string): Piece {
+    // Black if lowercase, White if uppercase
+    const color: Color = (san === san.toLowerCase()) ? 'black' : 'white';
+    return sanToPieceMap[san.toLowerCase()](color);
 }
 
-function pieceToSan(piece: Piece | null): string | null {
-    if (piece === null) return null;
-
-    const san = sanToPieceType[piece.type];
-
-    return (piece.color === 'black') ? san : san.toUpperCase();
+function isSan(character: string) {
+    const regex = /^[rnbqkp]$/i;
+    return regex.test(character);
 }
+
+
+//#endregion
+
+
+//#region Convert board to FEN
 
 export function convertBoardToFen(gameState: Game): string {
     let fenString = '';
     const { board, turn, canCastle, enPassantCoord, halfMoveClock, fullMoveClock } = gameState;
-
 
     // Loop through row (ranks)
     for (let row = 0; row < board.length; row++) {
@@ -136,6 +126,24 @@ export function convertBoardToFen(gameState: Game): string {
     return fenString;
 }
 
+const sanToPieceType: Record<PieceType, string> = {
+    'rook': 'r',
+    'knight': 'n',
+    'bishop': 'b',
+    'queen': 'q',
+    'king': 'k',
+    'pawn': 'p'
+}
+
+function pieceToSan(piece: Piece | null): string | null {
+    if (piece === null) return null;
+
+    const san = sanToPieceType[piece.type];
+
+    return (piece.color === 'black') ? san : san.toUpperCase();
+}
+
+
 function convertCastleStateToFen(castleState: CastleState): string {
     let castleStateFen = '';
 
@@ -150,5 +158,8 @@ function convertCastleStateToFen(castleState: CastleState): string {
         }
     }
 
-    return (castleStateFen !== '') ? ' ' + castleStateFen : castleStateFen;
+    // return '-' if neither side can castle
+    return (castleStateFen !== '') ? ` ${castleStateFen}` : '-';
 }
+
+//#endregion

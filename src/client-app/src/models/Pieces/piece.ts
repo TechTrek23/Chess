@@ -12,5 +12,6 @@ export abstract class Piece {
         this.image = image;
     }
 
+    // Should return an array of valid moves by selected chess piece.
     abstract validMoves(gameState: Game, {row, col}: Coordinate): Coordinate[];
 }
