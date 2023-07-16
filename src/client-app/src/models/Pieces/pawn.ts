@@ -12,12 +12,46 @@ export class Pawn extends Piece {
         super(type, color, image);
     }
 
+    validPawn(gameState: Game, {row, col}: Coordinate): Coordinate[]{
+        //array for adding all valid pawn moves
+        const moves: Coordinate[] = [];
+        //booleans for checking pawn conditions
+        const rowInvalid: boolean = (row + 1) > 7 || (row - 1) < 0;
+        const startingRow: number = (gameState.turn === 'white') ? 6 : 1;
+        // -1 for white pawns, 1 for black pawns
+        const direction: number = (gameState.turn === 'white') ? -1 : 1; 
+        const checkLeft: boolean = (col - 1) >= 0 && (gameState.board[row + direction][col - 1]?.color !== gameState.turn) && (gameState.board[row + direction][col - 1] !== null);
+        const checkRight: boolean = (col + 1) <= 7 && (gameState.board[row + direction][col + 1]?.color !== gameState.turn) && (gameState.board[row + direction][col + 1] !== null);
+
+        // check for cell above/below in column
+        if (!rowInvalid) {
+            if (gameState.board[row + direction][col] === null) {
+                //add the cell above/below to valid moves
+                moves.push({row: row + direction, col});
+                //if at starting position and first cell above/below is empty
+                //will check if the cell 2 steps above/below is empty
+                if (row === startingRow && gameState.board[row + 2 * direction][col] === null) {
+                    moves.push({row: row + 2 * direction, col});
+                }
+            }
+        }
+
+        //check for diagonals
+        if (checkLeft) {
+            moves.push({row: row + direction, col: col - 1});
+        }
+
+        if (checkRight) {
+            moves.push({row: row + direction, col: col + 1});
+        }
+
+        return moves;
+    }
+
     validMoves(gameState: Game, {row, col}: Coordinate): Coordinate[] {
         console.log("pawn")
         return (gameState.board[row][col]?.color === gameState.turn) ? 
-        [
-            { row: 1, col: 2}
-        ] 
+        this.validPawn(gameState, {row, col})
         :
         [];
     }
