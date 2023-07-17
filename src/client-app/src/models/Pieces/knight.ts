@@ -11,12 +11,47 @@ export class Knight extends Piece {
         super(type, color, image);
     }
 
+    validKnight(gameState: Game, {row, col}: Coordinate){
+        const moves: Coordinate[] = [];
+
+        // All possible L-shape moves
+        const knightMoves: Coordinate[] = [
+            { row: row - 2, col: col + 1 },
+            { row: row - 1, col: col + 2 },
+            { row: row + 1, col: col + 2 },
+            { row: row + 2, col: col + 1 },
+            { row: row + 2, col: col - 1 },
+            { row: row + 1, col: col - 2 },
+            { row: row - 1, col: col - 2 },
+            { row: row - 2, col: col - 1 },
+        ];
+
+        for (const move of knightMoves) {
+            const { row: moveRow, col: moveCol } = move;
+
+            // Check if the move is within the board boundaries
+            if (
+            moveRow >= 0 &&
+            moveRow <= 7 &&
+            moveCol >= 0 &&
+            moveCol <= 7
+            ) {
+            const piece = gameState.board[moveRow][moveCol];
+
+            // Check if the destination is either empty or contains an opponent's piece
+            if (!piece || piece.color !== gameState.turn) {
+                moves.push(move);
+            }
+            }
+        }
+
+        return moves;
+    }
+
     validMoves(gameState: Game, {row, col}: Coordinate): Coordinate[] {
         console.log("knight");
         return (gameState.board[row][col]?.color === gameState.turn) ? 
-        [
-            { row: 1, col: 2}
-        ] 
+        this.validKnight(gameState, {row,col}) 
         :
         [];
     }
