@@ -28,6 +28,6 @@ export function checkDirection(gameState: Game, row: number, col: number, dx: nu
   return moves;
 }
 
-export function checkBounds(row: number, col: number): Boolean {
+export function checkBounds(row: number, col: number): boolean {
   return (row >= 0 && row <= 7 && col >= 0 && col <= 7);
 } 

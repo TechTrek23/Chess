@@ -3,6 +3,7 @@ import king_w from "../../assets/images/king_w.svg";
 import { PieceType, Color, Coordinate } from "../chess";
 import { Game } from "../game";
 import { Piece } from "./piece";
+import { checkBounds } from "./Helper/MoveHelper";
 
 export class King extends Piece {
     constructor(type: PieceType, color: Color) {
@@ -11,7 +12,7 @@ export class King extends Piece {
         super(type, color, image);
     }
 
-    validKing(gameState: Game, { row, col }: Coordinate) {
+    private validKing(gameState: Game, { row, col }: Coordinate) {
         const moves: Coordinate[] = [];
       
         // All possible adjacent moves for a king
@@ -30,12 +31,7 @@ export class King extends Piece {
           const { row: moveRow, col: moveCol } = move;
       
           // Check if the move is within the board boundaries
-          if (
-            moveRow >= 0 &&
-            moveRow <= 7 &&
-            moveCol >= 0 &&
-            moveCol <= 7
-          ) {
+          if (checkBounds(moveRow, moveCol)) {
             const piece = gameState.board[moveRow][moveCol];
       
             // Check if the destination is either empty or contains an opponent's piece
