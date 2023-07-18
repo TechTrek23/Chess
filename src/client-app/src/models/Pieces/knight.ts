@@ -11,7 +11,7 @@ export class Knight extends Piece {
         super(type, color, image);
     }
 
-    validKnight(gameState: Game, {row, col}: Coordinate){
+    private validKnight(gameState: Game, {row, col}: Coordinate){
         const moves: Coordinate[] = [];
 
         // All possible L-shape moves

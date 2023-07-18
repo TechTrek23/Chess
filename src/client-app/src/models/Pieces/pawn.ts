@@ -12,7 +12,7 @@ export class Pawn extends Piece {
         super(type, color, image);
     }
 
-    validPawn(gameState: Game, {row, col}: Coordinate): Coordinate[]{
+    private validPawn(gameState: Game, {row, col}: Coordinate): Coordinate[]{
         //array for adding all valid pawn moves
         const moves: Coordinate[] = [];
         //booleans for checking pawn conditions

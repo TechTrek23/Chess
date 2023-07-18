@@ -3,7 +3,7 @@ import queen_w from "../../assets/images/queen_w.svg";
 import { PieceType, Color, Coordinate } from "../chess";
 import { Game } from "../game";
 import { Piece } from "./piece";
-import { MoveHelper } from "./Helper/MoveHelper";
+import { checkDirection } from "./Helper/MoveHelper";
 
 export class Queen extends Piece {
     constructor(type: PieceType, color: Color) {
@@ -12,20 +12,20 @@ export class Queen extends Piece {
         super(type, color, image);
     }
 
-    validQueen(gameState: Game, {row, col}: Coordinate): Coordinate[] {
+    private validQueen(gameState: Game, {row, col}: Coordinate): Coordinate[] {
         const moves:Coordinate[] = [];
 
         // Check all four diagonal directions
-        moves.push(...MoveHelper.checkDirection(gameState, row, col, 1, 1));  // Top right
-        moves.push(...MoveHelper.checkDirection(gameState, row, col, 1, -1)); // Top left
-        moves.push(...MoveHelper.checkDirection(gameState, row, col, -1, 1)); // Bottom right
-        moves.push(...MoveHelper.checkDirection(gameState, row, col, -1, -1)); // Bottom left
+        moves.push(...checkDirection(gameState, row, col, 1, 1));  // Top right
+        moves.push(...checkDirection(gameState, row, col, 1, -1)); // Top left
+        moves.push(...checkDirection(gameState, row, col, -1, 1)); // Bottom right
+        moves.push(...checkDirection(gameState, row, col, -1, -1)); // Bottom left
 
         // Check all four orthogonal directions
-        moves.push(...MoveHelper.checkDirection(gameState, row, col, 1, 0));  // Down
-        moves.push(...MoveHelper.checkDirection(gameState, row, col, -1, 0)); // Up
-        moves.push(...MoveHelper.checkDirection(gameState, row, col, 0, 1));  // Right
-        moves.push(...MoveHelper.checkDirection(gameState, row, col, 0, -1)); // Left
+        moves.push(...checkDirection(gameState, row, col, 1, 0));  // Down
+        moves.push(...checkDirection(gameState, row, col, -1, 0)); // Up
+        moves.push(...checkDirection(gameState, row, col, 0, 1));  // Right
+        moves.push(...checkDirection(gameState, row, col, 0, -1)); // Left
         
         return moves;
     }
