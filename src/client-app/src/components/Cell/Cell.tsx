@@ -17,7 +17,7 @@ const Cell = ({piece, isBlackCell, rowRank, colFile, cellIsHighlighted, onClick}
 
     return(
         <div className={`cell ${isBlackCell? "black-cell": "white-cell"}  ${cellIsHighlighted? "highlighted-cell": ""}`} onClick={() => onClick()}>
-            <img src={piece?.image} alt={piece?.type} />
+            { piece && <img src={piece.image} alt={piece.type} /> }
             <div className="row-rank rank-and-files">{rowRank}</div>
             <div className="col-file rank-and-files">{colFile}</div>
         </div>

@@ -25,8 +25,8 @@ function GameComponent() {
         const { row: currRow, col: currCol } = coord;
 
         // Only move when the cell is active (i.e cell has been selected already and ready to be moved) && is selected piece's turn.
-        if (activeCell && possibleMoves.length > 0) {
-
+        if (activeCell && possibleMoves.some((pMoves) => pMoves.row === currRow && pMoves.col === currCol)) {
+            
             // play sounds
             if (gameState.board[currRow][currCol] !== null) playCapture();
             else playMove();
