@@ -1,7 +1,7 @@
 import { Piece } from "../models/Pieces/piece";
 import { Coordinate } from "../models/chess";
 import { Game } from "../models/game";
-import { InitialBKRook, InitialBQRook, InitialBlackKing, InitialWKRook, InitialWQRook, InitialWhiteKing } from "../models/initialPositions";
+import { EndFile, InitialBKRook, InitialBQRook, InitialBlackKing, InitialWKRook, InitialWQRook, InitialWhiteKing, StartFile } from "../models/initialPositions";
 
 export function makeMove(game: Game, from: Coordinate, to: Coordinate): Game {
     // Clone the top-level properties using the spread operator
@@ -13,12 +13,6 @@ export function makeMove(game: Game, from: Coordinate, to: Coordinate): Game {
     const selectedPiece = clonedGame.board[from.row][from.col];
 
     if (selectedPiece !== null) {
-        // Set selected Piece to current cell
-        clonedGame.board[to.row][to.col] = selectedPiece;
-
-        // Remove Piece from previous cell
-        clonedGame.board[from.row][from.col] = null;
-
         // Updates game state if special move has been made
         makeSpecialMove(clonedGame, selectedPiece, from, to);
 
@@ -39,9 +33,20 @@ function makeSpecialMove(game: Game, currPiece: Piece, from: Coordinate, to: Coo
             rookMove(game, from, to);
             break;
         case 'pawn':
-            pawnMove(game);
+            pawnMove(game, from, to);
+            break;
+        default:
+            move(game, from, to);
             break;
     }
+}
+
+function move(game: Game, from: Coordinate, to: Coordinate) {
+    // Set selected Piece to current cell
+    game.board[to.row][to.col] = game.board[from.row][from.col];
+
+    // Remove Piece from previous cell
+    game.board[from.row][from.col] = null;
 }
 
 //#region Rook Related
@@ -61,6 +66,9 @@ function rookMove(game: Game, from: Coordinate, to: Coordinate) {
  
         game.canCastle[game.turn].queenSide = checkCastlingState(initalCoordinate, from, to);
     }
+
+    // make a move
+    move(game, from, to);
 }
 
 // Return false if the rook has been moved from its origial position
@@ -78,8 +86,39 @@ function kingMove(game: Game, from: Coordinate, to: Coordinate) {
         game.canCastle[game.turn].kingSide = castlingState;
         game.canCastle[game.turn].queenSide = castlingState;
     }
+
+    // if the absolute difference between the from and to column is greater than 1, that means castling must have occured
+    if (Math.abs(from.col - to.col) > 0) {
+        // QueenSide castling has occured
+        if (from.col > to.col) {
+            // move 2 steps towards left
+            const kingTo: Coordinate = { row: from.row, col: from.col - 2 };
+            move(game, from, kingTo);
+
+            // rook should be just next to the king on the right
+            const rookTo: Coordinate = { row: from.row, col: kingTo.col + 1 };
+            const rookFrom: Coordinate = { row: from.row, col: StartFile };
+            move(game, rookFrom, rookTo);
+        }
+        // KingSide castling has occured
+        else {
+            // move 2 steps towards right
+            const kingTo: Coordinate = { row: from.row, col: from.col + 2 };
+            move(game, from, kingTo);
+
+            // rook should be just next to the king on the left
+            const rookTo: Coordinate = { row: from.row, col: kingTo.col - 1 };
+            const rookFrom: Coordinate = { row: from.row, col: EndFile };
+            move(game, rookFrom, rookTo);
+        }
+    } 
+    // if not, its just a normal king move
+    else {
+        // make a move
+        move(game, from, to);
+    }
 }
 
-function pawnMove(game: Game) {
-
+function pawnMove(game: Game, from: Coordinate, to: Coordinate) {
+    move(game, from, to);
 }
