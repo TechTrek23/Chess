@@ -37,7 +37,6 @@ export function convertFenToBoard(fenString: string): BoardArray {
 
         return col;
     });
-
     return chessBoard;
 }
 
@@ -159,7 +158,7 @@ function convertCastleStateToFen(castleState: CastleState): string {
     }
 
     // return '-' if neither side can castle
-    return (castleStateFen !== '') ? ` ${castleStateFen}` : '-';
+    return (castleStateFen !== '') ? ` ${castleStateFen}` : ' -';
 }
 
 //#endregion

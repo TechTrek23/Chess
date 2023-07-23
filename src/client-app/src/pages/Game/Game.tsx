@@ -9,6 +9,7 @@ import moveSound from '../../assets/sounds/move.mp3';
 import captureSound from '../../assets/sounds/capture.mp3';
 import useSound from "use-sound";
 import { convertBoardToFen } from "../../api/fen";
+import { makeMove } from "../../api/moves";
 
 function GameComponent() {
     const [gameState, setGameState] = useState(new Game());
@@ -32,24 +33,14 @@ function GameComponent() {
             else playMove();
 
             setGameState(currGameState => {
-                // get a deep copy of currentBoard because we cannot modify state directly
-                const newBoard = [...currGameState.board.map(r => [...r])];
-
-                const { row: prevRow, col: prevCol } = activeCell;
-
-                // Set selected Piece to current cell
-                newBoard[currRow][currCol] = currGameState.board[prevRow][prevCol];
-
-                // Remove Piece from previous cell
-                newBoard[prevRow][prevCol] = null;
+                // Make a move and return a deep copy of new game state
+                const newGameState = makeMove(currGameState, activeCell, coord);
 
                 // Reset active cell
                 setActiveCell(null);
 
-                // switch turns
-                const switchColor = (currGameState.turn === 'white') ? 'black' : 'white'
-  
-                return { ...currGameState, board: newBoard, turn: switchColor };
+                return newGameState;
+
             });
         }
     }
