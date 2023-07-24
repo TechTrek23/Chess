@@ -34,6 +34,8 @@ function Board({ currentBoard, turn, activeCell, fen, onClick }: Props) {
 
                             return <Cell
                                 key={`${rowIndex} ${colIndex}`}
+                                rowIndex={rowIndex}
+                                colIndex={colIndex}
                                 piece={cell}
                                 isBlackCell={(rowIndex + colIndex) % 2 === 0}
                                 rowRank = {colIndex === 0 ? rankNumbers[rowIndex] : null}

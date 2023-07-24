@@ -3,7 +3,7 @@ import { Coordinate } from "../models/chess";
 import { Game } from "../models/game";
 import { EndFile, InitialBKRook, InitialBQRook, InitialBlackKing, InitialWKRook, InitialWQRook, InitialWhiteKing, StartFile } from "../models/initialPositions";
 
-export function makeMove(game: Game, from: Coordinate, to: Coordinate): Game {
+export async function makeMove(game: Game, from: Coordinate, to: Coordinate): Promise<Game> {
     // Clone the top-level properties using the spread operator
     const clonedGame = { ...game };
 
@@ -14,7 +14,7 @@ export function makeMove(game: Game, from: Coordinate, to: Coordinate): Game {
 
     if (selectedPiece !== null) {
         // Updates game state if special move has been made
-        makeSpecialMove(clonedGame, selectedPiece, from, to);
+        await makeSpecialMove(clonedGame, selectedPiece, from, to);
 
         // switch turns
         clonedGame.turn = (clonedGame.turn === 'white') ? 'black' : 'white'
@@ -24,10 +24,10 @@ export function makeMove(game: Game, from: Coordinate, to: Coordinate): Game {
 }
 
 // Custom logic for these PieceType since they have special moves
-function makeSpecialMove(game: Game, currPiece: Piece, from: Coordinate, to: Coordinate) {
+async function makeSpecialMove(game: Game, currPiece: Piece, from: Coordinate, to: Coordinate) {
     switch (currPiece.type) {
         case 'king':
-            kingMove(game, from, to);
+            await kingMove(game, from, to);
             break;
         case 'rook':
             rookMove(game, from, to);
@@ -41,12 +41,36 @@ function makeSpecialMove(game: Game, currPiece: Piece, from: Coordinate, to: Coo
     }
 }
 
-function move(game: Game, from: Coordinate, to: Coordinate) {
+async function move(game: Game, from: Coordinate, to: Coordinate) {
     // Set selected Piece to current cell
     game.board[to.row][to.col] = game.board[from.row][from.col];
-
     // Remove Piece from previous cell
     game.board[from.row][from.col] = null;
+}
+
+// This is async because it will need to wait for the animation to finish before updating the board
+async function makeAnimation(from: Coordinate, to: Coordinate) {
+    const fromCellElement = document.querySelector(`.board-${from.row}${from.col}`) as HTMLElement;
+
+    if (fromCellElement) {
+        // Calculate the distance to move horizontally and vertically
+        const cellWidth = fromCellElement.offsetWidth;
+        const cellHeight = fromCellElement.offsetHeight;
+
+        const deltaX = (to.col - from.col) * cellWidth;
+
+        const deltaY = (to.row - from.row) * cellHeight;
+
+        // Apply the transformation to slide the piece
+        fromCellElement.style.transition = `transform 3s ease`;
+
+        fromCellElement.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+
+        await new Promise(resolve => setTimeout(resolve, 3000)); // The same duration as the CSS animation
+
+        fromCellElement.style.transition = '';
+        fromCellElement.style.transform = '';
+    }
 }
 
 //#region Rook Related
@@ -78,7 +102,7 @@ function checkCastlingState(initialCoord: Coordinate, from: Coordinate, to: Coor
 
 //#endregion
 
-function kingMove(game: Game, from: Coordinate, to: Coordinate) {
+async function kingMove(game: Game, from: Coordinate, to: Coordinate) {
     // Update castling state if current player can perform castling on either the kingSide or queenSide
     if (game.canCastle[game.turn].kingSide || game.canCastle[game.turn].queenSide) {
         const initalCoordinate = (game.turn === 'white') ? InitialWhiteKing : InitialBlackKing;
@@ -88,27 +112,36 @@ function kingMove(game: Game, from: Coordinate, to: Coordinate) {
     }
 
     // if the absolute difference between the from and to column is greater than 1, that means castling must have occured
-    if (Math.abs(from.col - to.col) > 0) {
+    console.log("abs diff", Math.abs(from.col - to.col))
+    if (Math.abs(from.col - to.col) > 1) {
         // QueenSide castling has occured
         if (from.col > to.col) {
             // move 2 steps towards left
             const kingTo: Coordinate = { row: from.row, col: from.col - 2 };
-            move(game, from, kingTo);
 
             // rook should be just next to the king on the right
             const rookTo: Coordinate = { row: from.row, col: kingTo.col + 1 };
             const rookFrom: Coordinate = { row: from.row, col: StartFile };
+
+            makeAnimation(from, kingTo);
+            await makeAnimation(rookFrom, rookTo);
+
+            move(game, from, kingTo);
             move(game, rookFrom, rookTo);
         }
         // KingSide castling has occured
         else {
             // move 2 steps towards right
             const kingTo: Coordinate = { row: from.row, col: from.col + 2 };
-            move(game, from, kingTo);
 
             // rook should be just next to the king on the left
             const rookTo: Coordinate = { row: from.row, col: kingTo.col - 1 };
             const rookFrom: Coordinate = { row: from.row, col: EndFile };
+
+            makeAnimation(from, kingTo);
+            await makeAnimation(rookFrom, rookTo);
+
+            move(game, from, kingTo);
             move(game, rookFrom, rookTo);
         }
     } 

@@ -22,7 +22,7 @@ function GameComponent() {
     const [playMove] = useSound(moveSound);
     const [playCapture] = useSound(captureSound);
     
-    const updateBoardState = (coord: Coordinate) => {
+    const updateBoardState = async (coord: Coordinate) => {
         const { row: currRow, col: currCol } = coord;
 
         // Only move when the cell is active (i.e cell has been selected already and ready to be moved) && is selected piece's turn.
@@ -32,16 +32,12 @@ function GameComponent() {
             if (gameState.board[currRow][currCol] !== null) playCapture();
             else playMove();
 
-            setGameState(currGameState => {
-                // Make a move and return a deep copy of new game state
-                const newGameState = makeMove(currGameState, activeCell, coord);
-
-                // Reset active cell
-                setActiveCell(null);
-
-                return newGameState;
-
-            });
+            // Make a move and return a deep copy of new game state
+            const newGameState = await makeMove(gameState, activeCell, coord);
+            console.log("move done")
+            // Reset active cell
+            setActiveCell(null);
+            setGameState(newGameState);
         }
     }
 
