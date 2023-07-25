@@ -28,12 +28,13 @@ function GameComponent() {
         // Only move when the cell is active (i.e cell has been selected already and ready to be moved) && is selected piece's turn.
         if (activeCell && possibleMoves.some((pMoves) => pMoves.row === currRow && pMoves.col === currCol)) {
             
-            // play sounds
-            if (gameState.board[currRow][currCol] !== null) playCapture();
-            else playMove();
+            
 
             // Make a move and return a deep copy of new game state
             const newGameState = await makeMove(gameState, activeCell, coord);
+            // play sounds
+            if (gameState.board[currRow][currCol] !== null) playCapture();
+            else playMove();
             console.log("move done")
             // Reset active cell
             setActiveCell(null);

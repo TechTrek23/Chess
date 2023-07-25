@@ -30,12 +30,13 @@ async function makeSpecialMove(game: Game, currPiece: Piece, from: Coordinate, t
             await kingMove(game, from, to);
             break;
         case 'rook':
-            rookMove(game, from, to);
+            await rookMove(game, from, to);
             break;
         case 'pawn':
-            pawnMove(game, from, to);
+            await pawnMove(game, from, to);
             break;
         default:
+            await makeAnimation(from, to);
             move(game, from, to);
             break;
     }
@@ -62,20 +63,19 @@ async function makeAnimation(from: Coordinate, to: Coordinate) {
         const deltaY = (to.row - from.row) * cellHeight;
 
         // Apply the transformation to slide the piece
-        fromCellElement.style.transition = `transform 3s ease`;
+        fromCellElement.style.transition = `transform 0.1s ease`;
 
         fromCellElement.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
 
-        await new Promise(resolve => setTimeout(resolve, 3000)); // The same duration as the CSS animation
-
-        fromCellElement.style.transition = '';
-        fromCellElement.style.transform = '';
+        await new Promise(resolve => setTimeout(resolve, 100)); // The same duration as the CSS animation
     }
 }
 
 //#region Rook Related
 
-function rookMove(game: Game, from: Coordinate, to: Coordinate) {
+async function rookMove(game: Game, from: Coordinate, to: Coordinate) {
+    await makeAnimation(from, to);
+
     // only check for kingSide castling if kingSide castling is available
     if (game.canCastle[game.turn].kingSide) {
         // Rook initial row according to turn
@@ -112,7 +112,6 @@ async function kingMove(game: Game, from: Coordinate, to: Coordinate) {
     }
 
     // if the absolute difference between the from and to column is greater than 1, that means castling must have occured
-    console.log("abs diff", Math.abs(from.col - to.col))
     if (Math.abs(from.col - to.col) > 1) {
         // QueenSide castling has occured
         if (from.col > to.col) {
@@ -147,11 +146,13 @@ async function kingMove(game: Game, from: Coordinate, to: Coordinate) {
     } 
     // if not, its just a normal king move
     else {
+        await makeAnimation(from, to);
         // make a move
         move(game, from, to);
     }
 }
 
-function pawnMove(game: Game, from: Coordinate, to: Coordinate) {
+async function pawnMove(game: Game, from: Coordinate, to: Coordinate) {
+    await makeAnimation(from, to);
     move(game, from, to);
 }

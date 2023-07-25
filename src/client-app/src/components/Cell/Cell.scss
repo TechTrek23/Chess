@@ -42,6 +42,7 @@ $cell-size: calc((min(100vh, 100vw) / 8) * 0.8);
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1;
+    will-change: transform; // makes animation smoother (was glitching abit sometimes without this)
 }
 
 img {
