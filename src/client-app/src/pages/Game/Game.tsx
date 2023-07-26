@@ -36,15 +36,17 @@ function GameComponent() {
             if (gameState.board[currRow][currCol] !== null) playCapture();
             else playMove();
             console.log("move done")
-            // Reset active cell
+            // Reset active cell and possible moves
             setActiveCell(null);
             setGameState(newGameState);
+            setPossibleMoves([]);
         }
     }
 
     const onCellClick = (coord: Coordinate) => {
         // Set current clicked cell coordinate
         setActiveCell(coord);
+        possibleMoves.map((move) => console.log(move.col,", ", move.row));
 
         // Set possible moves according to currently picked piece. 
         // We can highlight these possible moves in chessboard.
@@ -65,6 +67,7 @@ function GameComponent() {
                 activeCell={activeCell}
                 fen={fen}
                 onClick={(coord) => onCellClick(coord)}
+                validMoves={possibleMoves}
             />
         </div>
     );
