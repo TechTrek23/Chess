@@ -5,7 +5,7 @@ import "../Board/Board.scss"
 
 interface Props {
     piece : Piece | null;
-    isBlackCell: Boolean;
+    isWhiteCell: Boolean;
     rowRank: string | null;
     colFile: string | null;
     cellIsHighlighted: boolean;
@@ -18,11 +18,11 @@ interface Props {
 }
 
 
-const Cell = ({piece, isBlackCell, rowRank, colFile, cellIsHighlighted, rowIndex, colIndex, 
+const Cell = ({piece, isWhiteCell, rowRank, colFile, cellIsHighlighted, rowIndex, colIndex, 
     validMove, castleableRook, capturablePiece, onClick}: Props) => {
 
     return(
-        <div className={`cell ${isBlackCell? "black-cell": "white-cell"} ${cellIsHighlighted? "highlighted-cell": ""}`} onClick={() => onClick()}>
+        <div className={`cell ${isWhiteCell? "white-cell": "black-cell"} ${cellIsHighlighted? "highlighted-cell": ""}`} onClick={() => onClick()}>
             { piece && <div className="img-wrapper"> <img src={piece.image} alt={piece.type} className={`board-${rowIndex}${colIndex}`}/> </div> }
             { rowRank && <div className="row-rank rank-and-files">{rowRank}</div>}
             { colFile && <div className="col-file rank-and-files">{colFile}</div>}

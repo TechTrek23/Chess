@@ -42,7 +42,7 @@ function Board({ currentBoard, turn, activeCell, fen, onClick, validMoves }: Pro
                                 rowIndex={rowIndex}
                                 colIndex={colIndex}
                                 piece={cell}
-                                isBlackCell={(rowIndex + colIndex) % 2 === 0}
+                                isWhiteCell={(rowIndex + colIndex) % 2 === 0}
                                 rowRank = {colIndex === 0 ? rankNumbers[rowIndex] : null}
                                 colFile= {rowIndex === 7 ? alphabeticalFiles[colIndex] : null}
                                 cellIsHighlighted={cellIsHighlighted}

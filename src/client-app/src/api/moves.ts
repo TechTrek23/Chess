@@ -3,6 +3,7 @@ import { Coordinate } from "../models/chess";
 import { Game } from "../models/game";
 import { EndFile, InitialBKRook, InitialBQRook, InitialBlackKing, InitialWKRook, InitialWQRook, InitialWhiteKing, StartFile } from "../models/initialPositions";
 
+// This is a helper function used in Game.tsx to update the Game state
 export async function makeMove(game: Game, from: Coordinate, to: Coordinate): Promise<Game> {
     // Clone the top-level properties using the spread operator
     const clonedGame = { ...game };
@@ -49,7 +50,7 @@ async function move(game: Game, from: Coordinate, to: Coordinate) {
     game.board[from.row][from.col] = null;
 }
 
-// This is async because it will need to wait for the animation to finish before updating the board
+// This is async because we will need to wait for this function to finish before updating the Game state
 async function makeAnimation(from: Coordinate, to: Coordinate) {
     const fromCellElement = document.querySelector(`.board-${from.row}${from.col}`) as HTMLElement;
 
@@ -76,19 +77,20 @@ async function makeAnimation(from: Coordinate, to: Coordinate) {
 async function rookMove(game: Game, from: Coordinate, to: Coordinate) {
     await makeAnimation(from, to);
 
-    // only check for kingSide castling if kingSide castling is available
-    if (game.canCastle[game.turn].kingSide) {
-        // Rook initial row according to turn
-        const initalCoordinate = (game.turn === 'white') ? InitialWKRook : InitialBKRook;
-
-        game.canCastle[game.turn].kingSide = checkCastlingState(initalCoordinate, from, to);
-    }
     // only check for queenSide castling if queenSide castling is available
     if (game.canCastle[game.turn].queenSide) {
         // Rook initial row according to turn
         const initalCoordinate = (game.turn === 'white') ? InitialWQRook : InitialBQRook;
  
         game.canCastle[game.turn].queenSide = checkCastlingState(initalCoordinate, from, to);
+    }
+
+    // only check for kingSide castling if kingSide castling is available
+    if (game.canCastle[game.turn].kingSide) {
+        // Rook initial row according to turn
+        const initalCoordinate = (game.turn === 'white') ? InitialWKRook : InitialBKRook;
+
+        game.canCastle[game.turn].kingSide = checkCastlingState(initalCoordinate, from, to);
     }
 
     // make a move

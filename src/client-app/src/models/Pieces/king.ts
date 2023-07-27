@@ -37,7 +37,6 @@ export class King extends Piece {
       
             // Check if the destination is either empty or contains an opponent's piece
             if (!piece || piece.color !== gameState.turn) {
-              // Castling Moves
               moves.push(move);
             }
           }
@@ -62,18 +61,19 @@ export class King extends Piece {
     }
 
 
-    // Move to right if step is Positive, move to left if step is Negative
-    private castlingMovesHelper(gameState: Game, { row, col }: Coordinate, step: number, totalSteps: number): Coordinate[] {
+    // Move to right if direction is Positive, move to left if direction is Negative
+    private castlingMovesHelper(gameState: Game, { row, col }: Coordinate, direction: number, totalSteps: number): Coordinate[] {
       const moves: Coordinate[] = [];
-      const rookColLocation = col + totalSteps * step;
+
+      const rookColLocation = col + totalSteps * direction;
 
       for (let mRight = 1; mRight <= totalSteps; mRight++) {
         // Move Left or Right according to step
-        const moveCol = col + mRight * step;
+        const moveCol = col + mRight * direction;
         // Check if the move is within the board boundaries
         if (checkBounds(row, moveCol)) {
           const piece = gameState.board[row][moveCol];
-          // Stop checking as soon as there is a piece on the way (except for the rook itself)
+          // Stop checking as soon as there is a piece on the way (except for the rook itself), should return an empty array since castling is no longer possible
           if (piece !== null && moveCol !== rookColLocation) return [];
   
           // Skip 1, because we probably have this move already in our validMoves array in the validKing method.
