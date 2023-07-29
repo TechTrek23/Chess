@@ -9,6 +9,7 @@ import moveSound from '../../assets/sounds/move.mp3';
 import captureSound from '../../assets/sounds/capture.mp3';
 import useSound from "use-sound";
 import { convertBoardToFen } from "../../api/fen";
+import { makeMove } from "../../api/moves";
 
 function GameComponent() {
     const [gameState, setGameState] = useState(new Game());
@@ -21,42 +22,30 @@ function GameComponent() {
     const [playMove] = useSound(moveSound);
     const [playCapture] = useSound(captureSound);
     
-    const updateBoardState = (coord: Coordinate) => {
+    const updateBoardState = async (coord: Coordinate) => {
         const { row: currRow, col: currCol } = coord;
 
         // Only move when the cell is active (i.e cell has been selected already and ready to be moved) && is selected piece's turn.
         if (activeCell && possibleMoves.some((pMoves) => pMoves.row === currRow && pMoves.col === currCol)) {
             
+            // Make a move and return a deep copy of new game state
+            const newGameState = await makeMove(gameState, activeCell, coord);
+
             // play sounds
             if (gameState.board[currRow][currCol] !== null) playCapture();
             else playMove();
 
-            setGameState(currGameState => {
-                // get a deep copy of currentBoard because we cannot modify state directly
-                const newBoard = [...currGameState.board.map(r => [...r])];
-
-                const { row: prevRow, col: prevCol } = activeCell;
-
-                // Set selected Piece to current cell
-                newBoard[currRow][currCol] = currGameState.board[prevRow][prevCol];
-
-                // Remove Piece from previous cell
-                newBoard[prevRow][prevCol] = null;
-
-                // Reset active cell
-                setActiveCell(null);
-
-                // switch turns
-                const switchColor = (currGameState.turn === 'white') ? 'black' : 'white'
-  
-                return { ...currGameState, board: newBoard, turn: switchColor };
-            });
+            // Reset active cell and possible moves
+            setActiveCell(null);
+            setGameState(newGameState);
+            setPossibleMoves([]);
         }
     }
 
     const onCellClick = (coord: Coordinate) => {
         // Set current clicked cell coordinate
         setActiveCell(coord);
+        possibleMoves.map((move) => console.log(move.col,", ", move.row));
 
         // Set possible moves according to currently picked piece. 
         // We can highlight these possible moves in chessboard.
@@ -77,6 +66,7 @@ function GameComponent() {
                 activeCell={activeCell}
                 fen={fen}
                 onClick={(coord) => onCellClick(coord)}
+                validMoves={possibleMoves}
             />
         </div>
     );
