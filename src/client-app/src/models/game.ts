@@ -1,5 +1,5 @@
 import { convertFenToBoard } from "../api/fen";
-import { BoardArray, CastleState, Color, Coordinate, rankNumbers, alphabeticalFiles } from "./chess";
+import { BoardArray, CastleState, Color, Coordinate } from "./chess";
 
 export class Game {
     board: BoardArray;
