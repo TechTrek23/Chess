@@ -1,4 +1,5 @@
 import { BoardArray, Color, Coordinate } from "../../models/chess";
+import { alphabeticalFiles, rankNumbers } from "../../models/chess";
 import Cell from "../Cell/Cell";
 
 import "./Board.scss";
@@ -17,9 +18,7 @@ interface Props {
 }
 
 function Board({ currentBoard, turn, activeCell, fen, onClick, validMoves }: Props) {
-    const alphabeticalFiles = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-    const rankNumbers = ['8', '7', '6', '5', '4', '3', '2', '1'];
-
+    
     // load the cells and determine if it is black or white cell
     // FEN notation will go into boardData
     return (

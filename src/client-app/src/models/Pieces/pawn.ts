@@ -45,6 +45,23 @@ export class Pawn extends Piece {
             moves.push({row: row + direction, col: col + 1});
         }
 
+        // check for en passant targets
+        if(gameState.enPassantCoord !== null) {
+            // diagonal left
+            if (col - 1 >= 0) {
+                if (gameState.enPassantCoord.row === row + direction && gameState.enPassantCoord.col === col - 1) {
+                    moves.push({row: row + direction, col: col - 1});
+                }
+            }
+
+            // diagonal right
+            if (col + 1 <= 7) {
+                if (gameState.enPassantCoord.row === row + direction && gameState.enPassantCoord.col === col + 1) {
+                    moves.push({row: row + direction, col: col + 1});
+                }
+            }
+        }
+
         return moves;
     }
 

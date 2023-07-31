@@ -1,5 +1,5 @@
 import { convertFenToBoard } from "../api/fen";
-import { BoardArray, CastleState, Color, Coordinate } from "./chess";
+import { BoardArray, CastleState, Color, Coordinate, rankNumbers, alphabeticalFiles } from "./chess";
 
 export class Game {
     board: BoardArray;
@@ -17,7 +17,7 @@ export class Game {
         this.board = convertFenToBoard(initialBoard);
         this.turn = (turn === 'w') ? 'white' : 'black';
         this.canCastle = processCastleState(castleState);
-        this.enPassantCoord = (enPassant === '-') ? null : null;
+        this.enPassantCoord = null;
         this.halfMoveClock = +halfMoveClock;
         this.fullMoveClock = +fullMoveClock;
     }

@@ -5,7 +5,7 @@ import { Pawn } from "../models/Pieces/pawn";
 import { Piece } from "../models/Pieces/piece";
 import { Queen } from "../models/Pieces/queen";
 import { Rook } from "../models/Pieces/rook";
-import { BoardArray, PieceType, Color, CastleState } from "../models/chess";
+import { BoardArray, PieceType, Color, CastleState, Coordinate, alphabeticalFiles, rankNumbers } from "../models/chess";
 import { Game } from "../models/game";
 
 //#region Convert Fen to Board
@@ -113,8 +113,8 @@ export function convertBoardToFen(gameState: Game): string {
     // concat castle state
     fenString += convertCastleStateToFen(canCastle);
 
-    // concat enPassant, for now just set to '-'
-    fenString += (enPassantCoord === null) ? ' -' : ' -';
+    // concat enPassant
+    fenString += convertEnPassantCoordToFen(enPassantCoord);
 
     // concat halfClockMove
     fenString += ` ${halfMoveClock}`;
@@ -159,6 +159,14 @@ function convertCastleStateToFen(castleState: CastleState): string {
 
     // return '-' if neither side can castle
     return (castleStateFen !== '') ? ` ${castleStateFen}` : ' -';
+}
+
+function convertEnPassantCoordToFen(enPassantCoord: Coordinate | null): string {
+
+    if(enPassantCoord) {
+        return " " + alphabeticalFiles[enPassantCoord.col] + rankNumbers[enPassantCoord.row];
+    }
+    return ' -';
 }
 
 //#endregion

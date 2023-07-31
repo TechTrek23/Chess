@@ -45,7 +45,7 @@ function GameComponent() {
     const onCellClick = (coord: Coordinate) => {
         // Set current clicked cell coordinate
         setActiveCell(coord);
-        possibleMoves.map((move) => console.log(move.col,", ", move.row));
+        // possibleMoves.map((move) => console.log(move.row,", ", move.col));
 
         // Set possible moves according to currently picked piece. 
         // We can highlight these possible moves in chessboard.
