@@ -33,6 +33,7 @@ function GameComponent() {
 
             // play sounds
             if (gameState.board[currRow][currCol] !== null) playCapture();
+            else if(gameState.enPassantCoord?.row === currRow && gameState.enPassantCoord?.col === currCol) playCapture();
             else playMove();
 
             // Reset active cell and possible moves
