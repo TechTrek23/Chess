@@ -1,5 +1,5 @@
 import { convertFenToBoard } from "../api/fen";
-import { BoardArray, CastleState, Color, Coordinate } from "./chess";
+import { BoardArray, CastleState, Color, Coordinate, alphabeticalFiles, rankNumbers } from "./chess";
 
 export class Game {
     board: BoardArray;
@@ -17,7 +17,7 @@ export class Game {
         this.board = convertFenToBoard(initialBoard);
         this.turn = (turn === 'w') ? 'white' : 'black';
         this.canCastle = processCastleState(castleState);
-        this.enPassantCoord = (enPassant === '-') ? null : null;
+        this.enPassantCoord = convertFenToEnPassantCoord(enPassant);
         this.halfMoveClock = +halfMoveClock;
         this.fullMoveClock = +fullMoveClock;
     }
@@ -39,5 +39,16 @@ function processCastleState(fenCastleState: string): CastleState {
             kingSide: fenCastleState.includes('k'),
             queenSide: fenCastleState.includes('q')
         }
+    }
+}
+
+// Helper function to convert en passant fen string to en passant coordinate
+function convertFenToEnPassantCoord(fenEnPassant: string): Coordinate | null {
+
+    if(fenEnPassant === "-") {
+        return null;
+    } else {
+        return {row: rankNumbers.indexOf(fenEnPassant[1]), 
+                col: alphabeticalFiles.indexOf(fenEnPassant[0])};
     }
 }

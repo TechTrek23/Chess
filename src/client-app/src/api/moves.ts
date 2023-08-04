@@ -29,9 +29,11 @@ async function makeSpecialMove(game: Game, currPiece: Piece, from: Coordinate, t
     switch (currPiece.type) {
         case 'king':
             await kingMove(game, from, to);
+            game.enPassantCoord = null;
             break;
         case 'rook':
             await rookMove(game, from, to);
+            game.enPassantCoord = null;
             break;
         case 'pawn':
             await pawnMove(game, from, to);
@@ -39,6 +41,7 @@ async function makeSpecialMove(game: Game, currPiece: Piece, from: Coordinate, t
         default:
             await makeAnimation(from, to);
             move(game, from, to);
+            game.enPassantCoord = null;
             break;
     }
 }
@@ -155,6 +158,29 @@ async function kingMove(game: Game, from: Coordinate, to: Coordinate) {
 }
 
 async function pawnMove(game: Game, from: Coordinate, to: Coordinate) {
+
+    // calculate distance
+    const movedDistance = from.row - to.row;
+
+    // pawn captures en passant target
+    if (game.enPassantCoord) {
+        if(game.board[to.row][to.col] === null && game.enPassantCoord.row === to.row && game.enPassantCoord.col === to.col) {
+            const direction: number = (game.turn === 'white') ? 1 : -1;
+            game.board[to.row + direction][to.col] = null;
+        }
+    }
+    
+    // if the pawn moves 2 cells -> En Passant Target
+    if (movedDistance === 2 || movedDistance === -2) {
+        // Add En Passant Target
+        game.enPassantCoord = (game.turn === 'black')? 
+                                {row: to.row - 1, col: to.col} : 
+                                {row: to.row + 1, col: to.col};
+    } else {
+        // reset En Passant Target
+        game.enPassantCoord = null;
+    }
+
     await makeAnimation(from, to);
     move(game, from, to);
 }
