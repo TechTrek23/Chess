@@ -4,7 +4,7 @@ import { Game } from "../models/game";
 import { EndFile, InitialBKRook, InitialBQRook, InitialBlackKing, InitialWKRook, InitialWQRook, InitialWhiteKing, StartFile } from "../models/initialPositions";
 
 // This is a helper function used in Game.tsx to update the Game state
-export async function makeMove(game: Game, from: Coordinate, to: Coordinate): Promise<Game> {
+export async function makeMove(game: Game, from: Coordinate, to: Coordinate, disableAnimation: boolean): Promise<Game> {
     // Clone the top-level properties using the spread operator
     const clonedGame = { ...game };
 
@@ -15,7 +15,7 @@ export async function makeMove(game: Game, from: Coordinate, to: Coordinate): Pr
 
     if (selectedPiece !== null) {
         // Updates game state if special move has been made
-        await makeSpecialMove(clonedGame, selectedPiece, from, to);
+        await makeSpecialMove(clonedGame, selectedPiece, from, to, disableAnimation);
 
         // switch turns
         clonedGame.turn = (clonedGame.turn === 'white') ? 'black' : 'white'
@@ -25,21 +25,21 @@ export async function makeMove(game: Game, from: Coordinate, to: Coordinate): Pr
 }
 
 // Custom logic for these PieceType since they have special moves
-async function makeSpecialMove(game: Game, currPiece: Piece, from: Coordinate, to: Coordinate) {
+async function makeSpecialMove(game: Game, currPiece: Piece, from: Coordinate, to: Coordinate, disableAnimation: boolean) {
     switch (currPiece.type) {
         case 'king':
-            await kingMove(game, from, to);
+            await kingMove(game, from, to, disableAnimation);
             game.enPassantCoord = null;
             break;
         case 'rook':
-            await rookMove(game, from, to);
+            await rookMove(game, from, to, disableAnimation);
             game.enPassantCoord = null;
             break;
         case 'pawn':
-            await pawnMove(game, from, to);
+            await pawnMove(game, from, to, disableAnimation);
             break;
         default:
-            await makeAnimation(from, to);
+            await makeAnimation(from, to, disableAnimation);
             move(game, from, to);
             game.enPassantCoord = null;
             break;
@@ -54,10 +54,10 @@ async function move(game: Game, from: Coordinate, to: Coordinate) {
 }
 
 // This is async because we will need to wait for this function to finish before updating the Game state
-async function makeAnimation(from: Coordinate, to: Coordinate) {
+async function makeAnimation(from: Coordinate, to: Coordinate, disableAnimation: boolean) {
     const fromCellElement = document.querySelector(`.board-${from.row}${from.col}`) as HTMLElement;
 
-    if (fromCellElement) {
+    if (fromCellElement && !disableAnimation) {
         // Calculate the distance to move horizontally and vertically
         const cellWidth = fromCellElement.offsetWidth;
         const cellHeight = fromCellElement.offsetHeight;
@@ -77,8 +77,8 @@ async function makeAnimation(from: Coordinate, to: Coordinate) {
 
 //#region Rook Related
 
-async function rookMove(game: Game, from: Coordinate, to: Coordinate) {
-    await makeAnimation(from, to);
+async function rookMove(game: Game, from: Coordinate, to: Coordinate, disableAnimation: boolean) {
+    await makeAnimation(from, to, disableAnimation);
 
     // only check for queenSide castling if queenSide castling is available
     if (game.canCastle[game.turn].queenSide) {
@@ -107,7 +107,7 @@ function checkCastlingState(initialCoord: Coordinate, from: Coordinate, to: Coor
 
 //#endregion
 
-async function kingMove(game: Game, from: Coordinate, to: Coordinate) {
+async function kingMove(game: Game, from: Coordinate, to: Coordinate, disableAnimation: boolean) {
     // Update castling state if current player can perform castling on either the kingSide or queenSide
     if (game.canCastle[game.turn].kingSide || game.canCastle[game.turn].queenSide) {
         const initalCoordinate = (game.turn === 'white') ? InitialWhiteKing : InitialBlackKing;
@@ -127,8 +127,8 @@ async function kingMove(game: Game, from: Coordinate, to: Coordinate) {
             const rookTo: Coordinate = { row: from.row, col: kingTo.col + 1 };
             const rookFrom: Coordinate = { row: from.row, col: StartFile };
 
-            makeAnimation(from, kingTo);
-            await makeAnimation(rookFrom, rookTo);
+            makeAnimation(from, kingTo, disableAnimation);
+            await makeAnimation(rookFrom, rookTo, disableAnimation);
 
             move(game, from, kingTo);
             move(game, rookFrom, rookTo);
@@ -142,8 +142,8 @@ async function kingMove(game: Game, from: Coordinate, to: Coordinate) {
             const rookTo: Coordinate = { row: from.row, col: kingTo.col - 1 };
             const rookFrom: Coordinate = { row: from.row, col: EndFile };
 
-            makeAnimation(from, kingTo);
-            await makeAnimation(rookFrom, rookTo);
+            makeAnimation(from, kingTo, disableAnimation);
+            await makeAnimation(rookFrom, rookTo, disableAnimation);
 
             move(game, from, kingTo);
             move(game, rookFrom, rookTo);
@@ -151,13 +151,13 @@ async function kingMove(game: Game, from: Coordinate, to: Coordinate) {
     } 
     // if not, its just a normal king move
     else {
-        await makeAnimation(from, to);
+        await makeAnimation(from, to, disableAnimation);
         // make a move
         move(game, from, to);
     }
 }
 
-async function pawnMove(game: Game, from: Coordinate, to: Coordinate) {
+async function pawnMove(game: Game, from: Coordinate, to: Coordinate, disableAnimation: boolean) {
 
     // calculate distance
     const movedDistance = from.row - to.row;
@@ -181,6 +181,6 @@ async function pawnMove(game: Game, from: Coordinate, to: Coordinate) {
         game.enPassantCoord = null;
     }
 
-    await makeAnimation(from, to);
+    await makeAnimation(from, to, disableAnimation);
     move(game, from, to);
 }

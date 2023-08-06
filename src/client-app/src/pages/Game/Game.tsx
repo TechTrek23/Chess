@@ -22,14 +22,13 @@ function GameComponent() {
     const [playMove] = useSound(moveSound);
     const [playCapture] = useSound(captureSound);
     
-    const updateBoardState = async (coord: Coordinate) => {
+    // Disable move animation if the piece is moved using dragAndDrop
+    const updateBoardState = async (coord: Coordinate, disableAnimation: boolean = false) => {
         const { row: currRow, col: currCol } = coord;
-
         // Only move when the cell is active (i.e cell has been selected already and ready to be moved) && is selected piece's turn.
         if (activeCell && possibleMoves.some((pMoves) => pMoves.row === currRow && pMoves.col === currCol)) {
-            
             // Make a move and return a deep copy of new game state
-            const newGameState = await makeMove(gameState, activeCell, coord);
+            const newGameState = await makeMove(gameState, activeCell, coord, disableAnimation);
 
             // play sounds
             if (gameState.board[currRow][currCol] !== null) playCapture();
@@ -43,10 +42,15 @@ function GameComponent() {
         }
     }
 
-    const onCellClick = (coord: Coordinate) => {
+    const onCellClick = (coord: Coordinate, isDND?: boolean) => {
+        // If the onCellClick is invoked using dragAndDrop, just update the Board without setting ActiveCell
+        if (isDND) {
+            updateBoardState(coord, isDND);
+            return;
+        }
+
         // Set current clicked cell coordinate
         setActiveCell(coord);
-        // possibleMoves.map((move) => console.log(move.row,", ", move.col));
 
         // Set possible moves according to currently picked piece. 
         // We can highlight these possible moves in chessboard.
@@ -55,7 +59,7 @@ function GameComponent() {
         
         // Only try to update board state if cell is active (i.e a cell has be clicked before)
         if (activeCell !== null) {
-            updateBoardState(coord)
+            updateBoardState(coord, isDND)
         }
     }
 
@@ -66,7 +70,7 @@ function GameComponent() {
                 turn={gameState.turn}
                 activeCell={activeCell}
                 fen={fen}
-                onClick={(coord) => onCellClick(coord)}
+                onClick={(coord, disableAnimation) => onCellClick(coord, disableAnimation)}
                 validMoves={possibleMoves}
             />
         </div>
