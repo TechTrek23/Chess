@@ -18,7 +18,6 @@ function GameComponent() {
     const [activeCell, setActiveCell] = useState<Coordinate | null>(null);
     const [possibleMoves, setPossibleMoves] = useState<Coordinate[]>([]);
     const [promotePawn, setPromotePawn] = useState(false);
-    const [promotedPiece, setPromotedPiece] = useState<PieceType | null>(null);
     const [pawnPromotionCoord, setPawnPromotionCoord] = useState<Coordinate | null>(null);
 
     // Convert Board to FEN whenever game state changes.
@@ -27,23 +26,6 @@ function GameComponent() {
     const [playMove] = useSound(moveSound);
     const [playCapture] = useSound(captureSound);
     
-    useEffect(() => {
-        if(promotedPiece) {
-            const newGameState = promotePawnToPiece(gameState, promotedPiece, activeCell, pawnPromotionCoord);
-
-            setPawnPromotionCoord(null);
-            setPromotedPiece(null);
-
-            playMove();
-
-            // Reset active cell and possible moves
-            setActiveCell(null);
-            setGameState(newGameState);
-            setPossibleMoves([]);
-        }
-    }, [promotedPiece])
-    
-
     const updateBoardState = async (coord: Coordinate) => {
         const { row: currRow, col: currCol } = coord;
 
@@ -93,7 +75,16 @@ function GameComponent() {
 
     function choosePawnPromotionPiece(piece: PieceType) {
         setPromotePawn(false);
-        setPromotedPiece(piece);
+        const newGameState = promotePawnToPiece(gameState, piece, activeCell, pawnPromotionCoord);
+
+        setPawnPromotionCoord(null);
+
+        playMove();
+
+        // Reset active cell and possible moves
+        setActiveCell(null);
+        setGameState(newGameState);
+        setPossibleMoves([]);
     }
 
     return (
