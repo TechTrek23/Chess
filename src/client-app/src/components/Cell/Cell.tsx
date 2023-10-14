@@ -4,6 +4,7 @@ import "./Cell.scss";
 import "../Board/Board.scss"
 import { useDrag, useDrop } from "react-dnd";
 import { Coordinate } from "../../models/chess";
+import { useState } from "react";
 
 interface Props {
     piece : Piece | null;
@@ -22,20 +23,23 @@ interface Props {
 
 
 const Cell = ({piece, isWhiteCell, rowRank, colFile, cellIsHighlighted, validMove, castleableRook, capturablePiece, coord, childSetDropCoord, onClick, onMouseDown}: Props) => {
-    
-    // // set drag
-    const [{ isOver }, drop] = useDrop({
+
+    const [currClickCell, setCurrentClickCell] = useState<Coordinate>();
+
+    // set drag
+    const [{ isOver, canDrop }, drop] = useDrop({
         accept: 'piece',
         // check for valid / invalid moves
         drop: () => childSetDropCoord(coord), // invoked when the piece is dropped
         collect: (monitor) => ({
             isOver: !!monitor.isOver(),
-            canDrop: !!monitor.canDrop()
+            // Droppable if move is valid and is on current cell
+            canDrop: !!(validMove || (currClickCell?.row === coord.row && currClickCell.col === coord.col))
         })
     });
 
     // set drop
-    const [{ isDragging }, drag, dragPreview ] = useDrag(() => ({
+    const [{ isDragging }, drag ] = useDrag(() => ({
 		// "type" is required. It is used by the "accept" specification of drop targets.
         type: 'piece',
 
@@ -47,8 +51,20 @@ const Cell = ({piece, isWhiteCell, rowRank, colFile, cellIsHighlighted, validMov
           }
     }));
 
+    // Highlight valid and invalid cells on hover
+    const dndCellHighlight = () => {
+        if (isOver) {
+            return (canDrop) ? 'valid-cell' : 'invalid-cell'
+        }
+    }
+
+    const cellOnMouseDown = () => {
+        setCurrentClickCell(coord);
+        onMouseDown();
+    }
+
     return(
-        <div className={`cell ${isWhiteCell? "white-cell": "black-cell"} ${cellIsHighlighted? "highlighted-cell": ""}`} onClick={() => onClick()} onMouseDown={() => onMouseDown()} ref={drop}>
+        <div className={`cell ${isWhiteCell? "white-cell": "black-cell"} ${cellIsHighlighted? "highlighted-cell": ""} ${dndCellHighlight()}`} onClick={() => onClick()} onMouseDown={() => cellOnMouseDown() } ref={drop}>
             { piece && 
                 <div className="img-wrapper"> 
                     <img 
@@ -56,7 +72,7 @@ const Cell = ({piece, isWhiteCell, rowRank, colFile, cellIsHighlighted, validMov
                         ref={drag} 
                         alt={piece.type} 
                         className={`board-${coord.row}${coord.col}`} 
-                        style={{ opacity : isDragging ? 0 : 1}}/> 
+                        style={{ opacity : isDragging ? 0 : 1 }}/> 
                 </div> 
             }
             { rowRank && <div className="row-rank rank-and-files">{rowRank}</div>}
