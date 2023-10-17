@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { BoardArray, Color, Coordinate } from "../../models/chess";
 import { alphabeticalFiles, rankNumbers } from "../../models/chess";
 import Cell from "../Cell/Cell";
@@ -13,11 +14,20 @@ interface Props {
     turn: Color;
     activeCell: Coordinate | null;
     fen: string;
-    onClick: (coord: Coordinate) => void;
+    onClick: (coord: Coordinate, disableAnimation?: boolean) => void;
     validMoves: Coordinate[];
 }
 
 function Board({ currentBoard, turn, activeCell, fen, onClick, validMoves }: Props) {
+
+    const [dropCoord, setDropCoord] = useState<Coordinate | undefined>();
+    
+    // we get this data from, Cell
+    useEffect(() => {
+        if (dropCoord) {
+            onClick(dropCoord, true);
+        }
+    }, [dropCoord]);
     
     // load the cells and determine if it is black or white cell
     // FEN notation will go into boardData
@@ -38,8 +48,6 @@ function Board({ currentBoard, turn, activeCell, fen, onClick, validMoves }: Pro
 
                             return <Cell
                                 key={`${rowIndex} ${colIndex}`}
-                                rowIndex={rowIndex}
-                                colIndex={colIndex}
                                 piece={cell}
                                 isWhiteCell={(rowIndex + colIndex) % 2 === 0}
                                 rowRank = {colIndex === 0 ? rankNumbers[rowIndex] : null}
@@ -49,6 +57,11 @@ function Board({ currentBoard, turn, activeCell, fen, onClick, validMoves }: Pro
                                 castleableRook = {castleableRook}
                                 capturablePiece = {capturablePiece}
                                 onClick={() => onClick({ row: rowIndex, col: colIndex })}
+                                coord={{row: rowIndex, col: colIndex}}
+                                // To update ActiveCell
+                                onMouseDown={() => onClick({row: rowIndex, col: colIndex})}
+                                // pass in setState hook to child, the value set in child will be passed back to parent
+                                childSetDropCoord={setDropCoord}
                             />;
                         })
                     );
