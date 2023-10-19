@@ -34,7 +34,7 @@ const Cell = ({piece, isWhiteCell, rowRank, colFile, cellIsHighlighted, validMov
         collect: (monitor) => ({
             isOver: !!monitor.isOver(),
             // Droppable if move is valid and is on current cell
-            canDrop: !!(validMove || (currClickCell?.row === coord.row && currClickCell.col === coord.col))
+            canDrop: !!validMove
         })
     });
 
@@ -42,13 +42,12 @@ const Cell = ({piece, isWhiteCell, rowRank, colFile, cellIsHighlighted, validMov
     const [{ isDragging }, drag ] = useDrag(() => ({
 		// "type" is required. It is used by the "accept" specification of drop targets.
         type: 'piece',
-
         collect: (monitor) => ({
             isDragging: !!monitor.isDragging(),
         }),
         options: {
             dropEffect: 'copy'
-          }
+        }
     }));
 
     // Highlight valid and invalid cells on hover
@@ -56,6 +55,7 @@ const Cell = ({piece, isWhiteCell, rowRank, colFile, cellIsHighlighted, validMov
         if (isOver) {
             return (canDrop) ? 'valid-cell' : 'invalid-cell'
         }
+        return '';
     }
 
     const cellOnMouseDown = () => {
