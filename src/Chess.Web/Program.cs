@@ -1,6 +1,10 @@
+using Chess.Application;
+using Chess.Application.Hubs;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddApplication(builder.Configuration);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -22,9 +26,16 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.UseRouting();
+
  app.UseCors(opt => 
 {
     opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000");
+});
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<ChessHub>("/chess");
 });
 
 app.Run();
