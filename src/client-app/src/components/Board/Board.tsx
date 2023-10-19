@@ -56,9 +56,8 @@ function Board({ currentBoard, turn, activeCell, fen, onClick, validMoves }: Pro
                                 validMove = {validMove}
                                 castleableRook = {castleableRook}
                                 capturablePiece = {capturablePiece}
-                                onClick={() => onClick({ row: rowIndex, col: colIndex })}
                                 coord={{row: rowIndex, col: colIndex}}
-                                // To update ActiveCell
+                                // To update ActiveCell or move piece (onMouseDown function similar to onClick event) 
                                 onMouseDown={() => onClick({row: rowIndex, col: colIndex})}
                                 // pass in setState hook to child, the value set in child will be passed back to parent
                                 childSetDropCoord={setDropCoord}

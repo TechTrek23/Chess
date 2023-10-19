@@ -4,7 +4,6 @@ import "./Cell.scss";
 import "../Board/Board.scss"
 import { useDrag, useDrop } from "react-dnd";
 import { Coordinate } from "../../models/chess";
-import { useState } from "react";
 
 interface Props {
     piece : Piece | null;
@@ -17,14 +16,11 @@ interface Props {
     capturablePiece: boolean;
     coord: Coordinate;
     childSetDropCoord: (value: Coordinate | undefined) => void;
-    onClick: () => void;
     onMouseDown: () => void;
 }
 
 
-const Cell = ({piece, isWhiteCell, rowRank, colFile, cellIsHighlighted, validMove, castleableRook, capturablePiece, coord, childSetDropCoord, onClick, onMouseDown}: Props) => {
-
-    const [currClickCell, setCurrentClickCell] = useState<Coordinate>();
+const Cell = ({piece, isWhiteCell, rowRank, colFile, cellIsHighlighted, validMove, castleableRook, capturablePiece, coord, childSetDropCoord, onMouseDown}: Props) => {
 
     // set drag
     const [{ isOver, canDrop }, drop] = useDrop({
@@ -58,13 +54,8 @@ const Cell = ({piece, isWhiteCell, rowRank, colFile, cellIsHighlighted, validMov
         return '';
     }
 
-    const cellOnMouseDown = () => {
-        setCurrentClickCell(coord);
-        onMouseDown();
-    }
-
     return(
-        <div className={`cell ${isWhiteCell? "white-cell": "black-cell"} ${cellIsHighlighted? "highlighted-cell": ""} ${dndCellHighlight()}`} onClick={() => onClick()} onMouseDown={() => cellOnMouseDown() } ref={drop}>
+        <div className={`cell ${isWhiteCell? "white-cell": "black-cell"} ${cellIsHighlighted? "highlighted-cell": ""} ${dndCellHighlight()}`} onMouseDown={() => onMouseDown() } ref={drop}>
             { piece && 
                 <div className="img-wrapper"> 
                     <img 
