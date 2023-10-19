@@ -65,6 +65,7 @@ img {
 .rank-and-files {
     font-size: calc($cell-size / 4);
     font-weight: bold;
+    user-select: none;
 }
 
 .row-rank {
